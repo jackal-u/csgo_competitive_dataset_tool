@@ -1,7 +1,7 @@
 
 
 ## description：
-a CS:GO video&action data set producer that uses demo as input
+a CS:GO video&action data set producer that uses demo as input.
 
 
 
