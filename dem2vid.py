@@ -7,20 +7,19 @@ import pyperclip
 import win32process
 
 
-# 影片按钮位置(x=741, y=57)
+keyboard = Controller()
+# 影片按钮位置(x=741, y=57) 
 # start_tick位置 (x=888, y=338)
 # end_tick位置 (x=1175, y=340)
 # 录制参数位置 (x=460, y=714)
 # 视频质量位置 (x=132, y=674)
 # 生成按钮位置 (x=137, y=56)
-# 生成按钮位置 (x=137, y=56)
+# 生成按钮位置 (x=137, y=56)bled 0rv_str
 # 聚焦玩家按钮位置 (x=678, y=376)
 # 输出文件名称位置 (x=1187, y=267) 可用于获取demo名字，更改输出文件名字
 # 初始页第一栏位置 (x=677, y=237) 用于滚动至下一个
 # CFG位置 (x=1853, y=320)
 
-
-keyboard = Controller()
 def change_pov_lock(steam_id):
     """
     借助demomanager的外挂代码，实现按照steamid锁定DEMO pov
@@ -50,14 +49,14 @@ def bind_pov_lock(steam_id):
     :param steam_id:
     :return:
     """
-    click_to((1853, 320))
+    click_to(cfg_location)
     # 写入新的内容
     message = """
     cl_draw_only_deathnotices 1
     cl_clock_correction 0
     snd_musicvolume 0
     mirv_fix playerAnimState 1
-    mirv_streams record matPostprocessEnable 1
+    mirv_streams record matPostprociiiiiiiiessEnable 1
     mirv_streams record matDynamicTonemapping 1
     mirv_streams record matMotionBlurEnabled 0
     mirv_streams record matForceTonemapScale 0
@@ -139,7 +138,7 @@ def go_back(times):
 
 
 def scroll_next(n):
-    click_to((677, 237))
+    click_to(first_ele_in_origin_page)
     for i in range(n):
         pyautogui.press("down")
 
@@ -153,17 +152,18 @@ def record():
         time.sleep(13)
         pyautogui.hotkey("ctrl", "d")  # 切入详情
         time.sleep(2.5)
-        click_to((741, 57))  # 点选影片
+        click_to(movie_button)  # 点选影片
         time.sleep(2.5)
         # 输入视频像素类型参数
-        click_to((460, 714))
+        click_to(record_variables_location)
         type_content("-pix_fmt yuv420p")
         # 改变视频录制质量
-        click_to((132, 674))
+        click_to(vid_quality_loca)
         type_content(str(vid_quality))
         # 聚焦玩家
+        click_to(focus_player_location)
         # 获取当前比赛demo名称
-        click_to((1187, 267))
+        click_to(vid_name_loca)
         demoid = get_content()
 
         # 读取json文件
@@ -184,19 +184,22 @@ def record():
                     round_num = n+1
                     vid_name = demoid+"_round{}_{}_tick_{}_{}_player_{}".format(round_num, side, start_tick, end_tick, player)
                     # 更改文件名称
-                    click_to((1187, 267))
+                    click_to(vid_name_loca)
                     type_content(vid_name)
                     print("changing vid name to", vid_name)
+                    time.sleep(1.5)
+                    click_to(vid_name_loca)
+                    type_content(vid_name)
                     # 更改开始、结束tick
-                    click_to((888, 338))
+                    click_to(start_tick_button)
                     type_content(str(start_tick))
-                    click_to((1175, 340))
+                    click_to(end_tick_button)
                     type_content(str(end_tick))
 
                     bind_pov_lock(player)
 
                     # 点击开始
-                    click_to((137, 56))
+                    click_to(produce_button)
                     ## 每1秒查询CSGO和CMD 阻塞等待结束
                     # 等待CSGO开始,选服务器
                     pause_till_start(u"Counter-Strike: Global Offensive")
@@ -212,18 +215,30 @@ def record():
                     pyautogui.press("enter")
                     pause_till_finish(u"Counter-Strike: Global Offensive - Direct3D 9", True)
                     time.sleep(1)
-                    if not pause_till_start(r"C:\Users\37002\AppData\Local\AkiVer\hlae\ffmpeg\bin\ffmpeg.exe"):
+                    if not pause_till_start(ffmpeg_path_in_demomanager):
                         continue
-                    pause_till_finish(r"C:\Users\37002\AppData\Local\AkiVer\hlae\ffmpeg\bin\ffmpeg.exe")
+                    pause_till_finish(ffmpeg_path_in_demomanager)
         else:
             print("going back! ")
             go_back(3)
             scroll_next(i+1)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     # 参数
+    movie_button = (741, 57)
+    start_tick_button = (888, 338)
+    end_tick_button = (1175, 340)
+    record_variables_location = (460, 714)
+    vid_quality_loca = (132, 674)
+    produce_button = (137, 56)
+    focus_player_location = (678, 376)  # click it manually please,just for once
+    vid_name_loca = (1187, 267)
+    first_ele_in_origin_page = (677, 237)  # make sure you clicked in the first place
+    cfg_location = (1853, 320)
     vid_quality = 30
-    demo_json_path = r"D:\data_bak\demo\demo_json"
+    ffmpeg_path_in_demomanager = r"C:\Users\37002\AppData\Local\AkiVer\hlae\ffmpeg\bin\ffmpeg.exe"
+    demo_json_path = r"./demo/record_ticks"
+    "as for video output location, you need to set video dump in demo manager manually in that software"
     time.sleep(1)
     record()

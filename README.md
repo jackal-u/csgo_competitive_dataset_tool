@@ -1,7 +1,9 @@
 
 
 ## description：
-a CS:GO video&action data set producer that uses demo as input
+this is the tool repository for [csgo competitive dataset](https://www.kaggle.com/datasets/kissjonh/csgo-competitive-dataset) made by stone&stemcell
+
+more specifically,  this is a CS:GO video&action data set producer that uses demo as input source.
 
 
 
@@ -13,18 +15,21 @@ a CS:GO video&action data set producer that uses demo as input
   ```json
   # file_name: g151-c-20220325145023354066746_de_dust2.json
   
-  {"players": 
+  {"players": # a list stores all players in this demo
             [76561198275573302, ...the steamid of the rest 9 players ], 
   
-  "76561198275573302": 
+  
+   "76561198275573302":  # player with this steamid, it's round data
           {"steamID": 76561198275573302, 
            "map": "de_dust2", 
-           "info": [[1150, 6097, "t"], ...the rest rounds with start_tick, end_tick, side 
-          }
+           "info": [[1150, 6097, "t"], ...the rest rounds 
+          }, # the info [[start_tick, end_tick, side],...]
+   
+   
   ...the rest 9 players
   }
   ```
-
+  
   
 
 
@@ -53,4 +58,4 @@ a CS:GO video&action data set producer that uses demo as input
 ## note
 the labeling requires huge ram space, make sure you have enough.
 
-email: 370025263@qq.com
+email: mengshi2022@ia.ac.cn

@@ -7,10 +7,11 @@ from awpy.parser import DemoParser
 def get_all_players(dem_data,round_num):
     ":return all playerid"
     try:
-        ct =[each["steamID"] for each in dem_data["gameRounds"][round_num]["ctSide"]["players"]]
         t = [each["steamID"] for each in dem_data["gameRounds"][round_num]["tSide"]["players"]]
-    except:
-        pass
+        ct =[each["steamID"] for each in dem_data["gameRounds"][round_num]["ctSide"]["players"]]
+    except KeyError:
+        t = [each["steamID"] for each in dem_data["gameRounds"][round_num]["frames"][1]["t"]["players"]]
+        ct = [each["steamID"] for each in dem_data["gameRounds"][round_num]["frames"][1]["ct"]["players"]]
         # # 遇到错误就换下一局
         # print("ERROR"," ROUND", round_num)
         # print(dem_data["gameRounds"][round_num]["tSide"]["players"])
@@ -30,10 +31,11 @@ def get_player_life_status(player_id,player_side,frame):
 
 def produce_json(demo_name):
     try:
-        path = "/disk3/workspace/stone/5e_demo/"
-        #demo_name="g154-20220325013137790770652_de_dust2.dem"
+
+        #demo_name="./demo/g151-c-20220325145023354066746_de_dust2.dem"
         demo_id = demo_name.strip(".dem")
         demo_id = demo_id.strip("/")
+        demo_id = demo_id.split("/")[-1]
         print("demo_id", demo_id)
         demo_parser = DemoParser(demofile=demo_name,
                                  demo_id=demo_id,
@@ -46,7 +48,7 @@ def produce_json(demo_name):
 
         # init dump
         players_pov_info = {}
-        t, ct = get_all_players(data, 1)
+        t, ct = get_all_players(data, 2)
         players_pov_info["players"] = t + ct
         for each in t + ct:
             players_pov_info[each] = {
@@ -82,13 +84,21 @@ def produce_json(demo_name):
                                 ct_ends[each_player] = end_tick
                 # put info in the dump
                 for each_player in t:
-                    players_pov_info[each_player]["info"].append([start_tick, t_ends[each_player],"t"])
+                    #print("players_pov_info.keys()", players_pov_info.keys())
+                    #print("t_ends key", t_ends.keys(), len(frames), round["endOfficialTick"])
+                    try:
+                        players_pov_info[each_player]["info"].append([start_tick, t_ends[each_player], "t"])
+                    except KeyError:
+                        continue
 
                 for each_player in ct:
-                    players_pov_info[each_player]["info"].append([start_tick, ct_ends[each_player],"ct"])
-        with open(path+demo_id+".json", "w") as f:
+                    try:
+                        players_pov_info[each_player]["info"].append([start_tick, ct_ends[each_player],"ct"])
+                    except KeyError:
+                        continue
+        with open(path+"./record_ticks/"+demo_id+".json", "w") as f:
             f.write(json.dumps(players_pov_info))
-            print(path+demo_id+".json", "DONE writting")
+            print(path + "/"+demo_id+".json", "DONE writting")
     except:
         import traceback
         traceback.print_exc()
@@ -96,6 +106,7 @@ def produce_json(demo_name):
 
 if __name__ == "__main__":
     name_list = sys.argv[1:]
+    path = "./demo"
     print("processing", ",\n".join(name_list))
     list(map(produce_json, name_list))
     # 11847633

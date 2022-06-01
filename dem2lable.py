@@ -22,13 +22,19 @@ def normalizeAngles(pitch, yaw):
     return pitch, yaw
 
 
-def get_all_players(dem_data, round_num):
+def get_all_players(dem_data,round_num):
     ":return all playerid"
     try:
-        ct =[each["steamID"] for each in dem_data["gameRounds"][round_num]["ctSide"]["players"]]
         t = [each["steamID"] for each in dem_data["gameRounds"][round_num]["tSide"]["players"]]
-    except:
-        pass
+        ct =[each["steamID"] for each in dem_data["gameRounds"][round_num]["ctSide"]["players"]]
+    except KeyError:
+        t = [each["steamID"] for each in dem_data["gameRounds"][round_num]["frames"][1]["t"]["players"]]
+        ct = [each["steamID"] for each in dem_data["gameRounds"][round_num]["frames"][1]["ct"]["players"]]
+        # # 遇到错误就换下一局
+        # print("ERROR"," ROUND", round_num)
+        # print(dem_data["gameRounds"][round_num]["tSide"]["players"])
+        # ct = [each["steamID"] for each in dem_data["gameRounds"][round_num+1]["ctSide"]["players"]]
+        # t = [each["steamID"] for each in dem_data["gameRounds"][round_num+1]["tSide"]["players"]]
     # 过滤掉steamid为0的人
     ct = list(filter(lambda num: num != 0, ct))
     t = list(filter(lambda num: num != 0, t))
@@ -43,7 +49,7 @@ def get_player_life_status(player_id,player_side,frame):
 
 def gen_fire_dic(data, r_n):
     dic={}
-    t,ct = get_all_players(data,r_n)
+    t,ct = get_all_players(data, r_n)
     # use set to store ticks
     for player in t+ct:
         dic[player] = set()
@@ -219,6 +225,7 @@ if __name__ == '__main__':
     for demo_name in demo_names:
             demo_id = demo_name.strip(".dem")
             demo_id = demo_id.strip("/")
+            demo_id = demo_id.strip("/demo")
             action_gap = 8  # action之间的tick差；一秒如执行8次行为，在128tick服务器，需要每16tick生成一个aciton
             parse_rate = 1  # 4 为sample出来的tick差距为8tick； 2为sample出来的tick差距为4tick
             infer_tick_len = 4   # 在已经sample后的基础上，把几个tick纳入考虑范围生成action
@@ -232,7 +239,7 @@ if __name__ == '__main__':
                                      parse_frames=True,
                                      parse_rate=parse_rate)# parse_rate means the interval between the sampled tick
             data = demo_parser.parse()
-            #data = demo_parser.read_json("./{}.json".format(demo_id))
+            #data = demo_parser.read_json("./{}.json".format(demo_id)) data["gameRounds"][10]["frames"][607*4]
             rounds = data["gameRounds"]
             # enumerate rounds
             for r_n, round in enumerate(rounds):
