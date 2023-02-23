@@ -3,7 +3,7 @@
 ## description：
 this is the tool repository for [csgo competitive dataset](https://www.kaggle.com/datasets/kissjonh/csgo-competitive-dataset) made by stone&stemcell
 
-more specifically,  this is a CS:GO video&action data set producer that uses demo as input source.
+more specifically,  this is a CS:GO video&action dataset producer that takes demo as input source.
 
 
 
@@ -40,9 +40,9 @@ more specifically,  this is a CS:GO video&action data set producer that uses dem
 
   - use cheat engine to achieve pov lock in game.  [how to video](https://www.youtube.com/watch?v=zFjwrzzvrCQ)
 
-  - config the path that stores the json files in script dem2vid.py
+  - configurate the path that stores the json files in script dem2vid.py
 
-  - config the buttons pixel location in script dem2vid.py
+  - configurate the buttons pixel location in script dem2vid.py
 
   - switch demo manager to the start, click focus the 1st demo and run the dem2vid.py
 
@@ -54,6 +54,12 @@ more specifically,  this is a CS:GO video&action data set producer that uses dem
 
 - NOW, you have the dataset
 
+
+## script description
+dem2tick.py reads the *.dem files stored in ./demo and dump them into ./demo/record_ticks/matchid_mapname.json format.
+dem2vid.py reads the matchid_mapname.json and produce pov video for each player in each round, e.g ./data/g151-c-20220402212855368210429_de_dust2_round1_t_tick_1159_8945_player_76561198146323670.mp4
+dem2label.py reads matchid_mapname.json and infer player action for each player in each round, e.g /labels/g151-c-20220402212855368210429_de_dust2/g151-c-20220402212855368210429_de_dust2_round10_ct_tick_99900_105509_player_76561198417754488.csv
+meta.py match *.mp4 and *.csv label and produce meta.csv for model training.
 
 ## note
 the labeling requires huge ram space, make sure you have enough.
