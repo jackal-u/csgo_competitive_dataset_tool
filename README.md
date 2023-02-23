@@ -56,10 +56,13 @@ more specifically,  this is a CS:GO video&action dataset producer that takes dem
 
 
 ## script description
-dem2tick.py reads the *.dem files stored in ./demo and dump them into ./demo/record_ticks/matchid_mapname.json format.
-dem2vid.py reads the matchid_mapname.json and produce pov video for each player in each round, e.g ./data/g151-c-20220402212855368210429_de_dust2_round1_t_tick_1159_8945_player_76561198146323670.mp4
-dem2label.py reads matchid_mapname.json and infer player action for each player in each round, e.g /labels/g151-c-20220402212855368210429_de_dust2/g151-c-20220402212855368210429_de_dust2_round10_ct_tick_99900_105509_player_76561198417754488.csv
-meta.py match *.mp4 and *.csv label and produce meta.csv for model training.
+- dem2tick.py reads the *.dem files stored in ./demo and dump them into ./demo/record_ticks/matchid_mapname.json format.
+
+- dem2vid.py reads the matchid_mapname.json and produce pov video for each player in each round, e.g ./data/g151-c-20220402212855368210429_de_dust2_round1_t_tick_1159_8945_player_76561198146323670.mp4
+
+- dem2label.py reads matchid_mapname.json and infer player action for each player in each round, e.g /labels/g151-c-20220402212855368210429_de_dust2/g151-c-20220402212855368210429_de_dust2_round10_ct_tick_99900_105509_player_76561198417754488.csv
+
+- meta.py match *.mp4 and *.csv label and produce meta.csv for model training.
 
 ## note
 the labeling requires huge ram space, make sure you have enough.
